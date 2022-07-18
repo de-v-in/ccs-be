@@ -1,8 +1,8 @@
 import { QueueManager } from "@saintno/needed-tools";
-import { exec } from "child_process";
 import { Logger } from "@utils/log";
+import { CrawlerInstance } from "./crawler";
 
-class OpenseaCrawlerServices {
+class OpenseaCrawlerService {
   maxParallelCall = 2;
 
   queue: QueueManager;
@@ -18,24 +18,14 @@ class OpenseaCrawlerServices {
   }
 
   async getNFTPricing(address: string): Promise<number | false> {
-    const result: string = await this.queue.wait(
-      () =>
-        new Promise((resolve, rej) =>
-          exec(
-            `curl --user-agent 'Chrome/79' --silent https://opensea.io/assets/solana/${address} > /tmp/${address} && xidel -s /tmp/${address} --xpath "//div[contains(@class, 'Price--amount')]" && rm /tmp/${address}`,
-            (err, stdout) => {
-              if (err) {
-                resolve("");
-              }
-              resolve(stdout);
-            }
-          )
-        )
+    const data = await CrawlerInstance.crawlStatic(
+      `https://opensea.io/assets/solana/${address}`,
+      "div.TradeStation--price-container > .TradeStation--price > .Price--amount"
     );
-    return result.length > 0 ? parseFloat(result.trim().split("\n")[0]) : false;
+    return data ? parseFloat(data[0].trim().split("\n")[0]) : false;
   }
 }
 
-const OpenseaServices = new OpenseaCrawlerServices();
+const OpenseaServiceInstance = new OpenseaCrawlerService();
 
-export { OpenseaServices };
+export { OpenseaServiceInstance };

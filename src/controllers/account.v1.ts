@@ -1,5 +1,5 @@
+import { SolanaServiceInsatance } from "@services/solana";
 import { Logger } from "@utils/log";
-import { SolanaServices } from "@services/solana";
 
 const log = new Logger("AccountController.v1");
 
@@ -11,7 +11,11 @@ const getAccountTransferHistory = async (
   const transferMap = {};
   const stepnTokens: IStepNSPLTransfer[] = [];
 
-  const data = await SolanaServices.getSPLTransfer(account, offset, limit);
+  const data = await SolanaServiceInsatance.getSPLTransfer(
+    account,
+    offset,
+    limit
+  );
   const transferList = data.data;
   const getTokenMetaApiList = transferList
     .map((transfer) => {
@@ -20,7 +24,7 @@ const getAccountTransferHistory = async (
     })
     .map((address): Promise<{ tokenMeta: ITokenMeta; address: string }> => {
       return new Promise((resolve, reject) => {
-        SolanaServices.getTokenMetaData(address)
+        SolanaServiceInsatance.getTokenMetaData(address)
           .then((data) =>
             resolve({
               tokenMeta: data,

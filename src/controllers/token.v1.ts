@@ -1,12 +1,12 @@
-import { OpenseaServices } from "@services/opensea";
-import { SolanaServices } from "@services/solana";
+import { OpenseaServiceInstance } from "@services/opensea";
+import { SolanaServiceInsatance } from "@services/solana";
 import { Logger } from "@utils/log";
 import got from "got/dist/source";
 
 const log = new Logger("TokenController.v1");
 
 const getTokenMetadata = async (address: string): Promise<IStepNTokenMeta> => {
-  const tokenURI = await SolanaServices.getTokenUri(address);
+  const tokenURI = await SolanaServiceInsatance.getTokenUri(address);
   log.i("getTokenMetadata", "Found tokenURI", tokenURI);
   const meta = await got
     .get(tokenURI, {
@@ -17,7 +17,7 @@ const getTokenMetadata = async (address: string): Promise<IStepNTokenMeta> => {
 };
 
 const getTokenOpenseaPricing = async (address: string) => {
-  const price = await OpenseaServices.getNFTPricing(address);
+  const price = await OpenseaServiceInstance.getNFTPricing(address);
   log.i("getTokenOpenseaPricing", price ? "Found price" : "Price unknown", {
     price,
   });
@@ -30,7 +30,7 @@ const getTokenOpenseaPricing = async (address: string) => {
 };
 
 const getTokenTradeHistory = async (address: string, offset = 0, limit = 5) => {
-  const trades = await SolanaServices.getSPLTradeHistory(
+  const trades = await SolanaServiceInsatance.getSPLTradeHistory(
     address,
     offset,
     limit
