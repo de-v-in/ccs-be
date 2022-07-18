@@ -1,16 +1,18 @@
-# Hono with Bun runtime
+# CCS Backend with crawler services
 
 ## Getting Started
 
 ### Cloning the repo
 
 ```sh
-bun create hono ./NAME_HERE
+yarn install --- Using yarn as package manager
+bun install ---- Using BunJS as package manager, faster
 ```
 
 ### Development
 ```
-bun run start
+yarn dev
+bun run dev
 ```
 
 Open http://localhost:3000 with your browser to see the result.
