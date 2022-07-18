@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "module": "commonjs",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "types": ["node"],
+    "baseUrl": "./src",
+    "paths": {
+      "@controllers/*": ["controllers/*"],
+      "@constants/*": ["constants/*"],
+      "@services/*": ["services/*"],
+      "@modals/*": ["modals/*"],
+      "@utils/*": ["utils/*"],
+      "@types/*": ["types/*"]
+    },
+    "typeRoots": ["./src/types", "./node_modules/@types"]
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
+  "include": ["next-env.d.ts", "./src/**/*.ts", "./src/**/*.tsx"],
+  "exclude": ["node_modules"]
+
+}
