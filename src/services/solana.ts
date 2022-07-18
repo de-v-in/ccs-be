@@ -4,7 +4,7 @@ import { QueueManager } from "@saintno/needed-tools";
 import { Logger } from "@utils/log";
 import got from "got/dist/source";
 
-class SolanaCrawlerServices {
+class SolanaCrawlerService {
   endpoint = "https://public-api.solscan.io";
   chain = "https://api.mainnet-beta.solana.com";
   maxParallelCall = 20;
@@ -72,6 +72,6 @@ class SolanaCrawlerServices {
   }
 }
 
-const SolanaServices = new SolanaCrawlerServices();
+const SolanaServiceInsatance = new SolanaCrawlerService();
 
-export { SolanaServices };
+export { SolanaServiceInsatance };
