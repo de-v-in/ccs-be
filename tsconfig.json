@@ -1,27 +1,41 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
+    "baseUrl": ".",
     "module": "commonjs",
     "target": "esnext",
+    "sourceMap": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "moduleResolution": "node",
+    "isolatedModules": false,
+    "suppressImplicitAnyIndexErrors": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "allowSyntheticDefaultImports": true,
+    "importHelpers": true,
+    "newLine": "LF",
+    "noEmit": true,
     "esModuleInterop": true,
-    "types": ["node"],
-    "baseUrl": "./src",
-    "paths": {
-      "@controllers/*": ["controllers/*"],
-      "@constants/*": ["constants/*"],
-      "@services/*": ["services/*"],
-      "@modals/*": ["modals/*"],
-      "@utils/*": ["utils/*"],
-      "@types/*": ["types/*"]
-    },
-    "typeRoots": ["./src/types", "./node_modules/@types"]
+    "resolveJsonModule": true,
+    "lib": [
+      "es7",
+      "dom",
+      "ESNext.AsyncIterable"
+    ],
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
   },
-  "ts-node": {
-    "require": ["tsconfig-paths/register"]
-  },
-  "include": ["next-env.d.ts", "./src/**/*.ts", "./src/**/*.tsx"],
-  "exclude": ["node_modules"]
-
+  "exclude": [
+    "node_modules",
+    "./public",
+    "dist",
+    "test"
+  ],
+  "linterOptions": {
+    "exclude": []
+  }
 }

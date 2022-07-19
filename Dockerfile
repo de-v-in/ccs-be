@@ -1,32 +1,48 @@
-# Install dependencies only when needed
-FROM node:16-alpine AS deps
-RUN apk add --no-cache libc6-compat
-RUN apk add --update python3 make g++\
-   && rm -rf /var/cache/apk/*
-WORKDIR /app
-COPY package.json yarn.lock ./
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-RUN yarn install --frozen-lockfile
+###############################################################################
+###############################################################################
+##                      _______ _____ ______ _____                           ##
+##                     |__   __/ ____|  ____|  __ \                          ##
+##                        | | | (___ | |__  | |  | |                         ##
+##                        | |  \___ \|  __| | |  | |                         ##
+##                        | |  ____) | |____| |__| |                         ##
+##                        |_| |_____/|______|_____/                          ##
+##                                                                           ##
+## description     : Dockerfile for TsED Application                         ##
+## author          : TsED team                                               ##
+## date            : 2022-03-05                                              ##
+## version         : 2.0                                                     ##
+##                                                                           ##
+###############################################################################
+###############################################################################
+ARG NODE_VERSION=16.13.1
 
-# If using npm with a `package-lock.json` comment out above and use below instead
-# COPY package.json package-lock.json ./ 
-# RUN npm ci
+FROM node:${NODE_VERSION}-alpine as build
+WORKDIR /opt
 
-# Rebuild the source code only when needed
-FROM node:16-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY package.json yarn.lock tsconfig.json tsconfig.compile.json .barrelsby.json ./
 
+RUN yarn install --pure-lockfile
+
+COPY ./src ./src
+
+RUN yarn build
+
+FROM node:${NODE_VERSION}-alpine as runtime
+ENV WORKDIR /opt
+WORKDIR $WORKDIR
+
+RUN apk update && apk add build-base git curl
+RUN npm install -g pm2
+
+COPY --from=build /opt .
+
+RUN yarn install --pure-lockfile --production
+
+COPY ./views ./views
+COPY processes.config.js .
+
+EXPOSE 8081
+ENV PORT 8081
 ENV NODE_ENV production
 
-RUN apk update \
-  && apk add openssl-dev --no-cache \
-  && apk --no-cache add curl \
-  && apk --no-cache add chromium
-
-EXPOSE 3000
-
-ENV PORT 3000
-
-CMD ["npm", "run", "start"]
+CMD ["pm2-runtime", "start", "processes.config.js", "--env", "production"]

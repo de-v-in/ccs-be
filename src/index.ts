@@ -1,30 +1,18 @@
-import Koa from "koa";
-import { Logger } from "@utils/log";
-import { routerV1 } from "./router.v1";
-import { performance } from "perf_hooks";
+import {$log} from "@tsed/common";
+import { PlatformKoa } from "@tsed/platform-koa";
+import {Server} from "./Server";
 
-const app = new Koa();
+async function bootstrap() {
+  try {
+    const platform = await PlatformKoa.bootstrap(Server);
+    await platform.listen();
 
-const gLog = new Logger("Global");
-const port = process.env.PORT || 3000;
+    process.on("SIGINT", () => {
+      platform.stop();
+    });
+  } catch (error) {
+    $log.error({event: "SERVER_BOOTSTRAP_ERROR", message: error.message, stack: error.stack});
+  }
+}
 
-app.use(async (ctx, next) => {
-  const startTime = performance.now();
-  await next();
-  const endTime = performance.now();
-  gLog.r(ctx.method, ctx.url, {
-    status: ctx.body?.status,
-    processTime: `${Math.round(endTime - startTime)}ms`,
-  });
-});
-
-/**
- * Add the routers to the app
- */
-app.use(routerV1.routes());
-
-gLog.i("APP", `Running at http://localhost:${port}`);
-
-export { gLog };
-
-app.listen(process.env.PORT || 3000);
+bootstrap();
